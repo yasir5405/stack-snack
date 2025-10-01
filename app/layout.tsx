@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "@/context/Theme";
-import Navbar from "@/components/navigation/navbar";
+import { Toaster } from "sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -41,9 +41,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
           {children}
         </ThemeProvider>
+        <Toaster position="top-center" expand={false} richColors closeButton />
       </body>
     </html>
   );
