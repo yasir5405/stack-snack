@@ -7,7 +7,7 @@ import {
   DefaultValues,
   FieldValues,
   Path,
-  SubmitHandler,
+  // SubmitHandler,
   useForm,
 } from "react-hook-form";
 import { z, ZodType } from "zod";
@@ -90,7 +90,7 @@ const AuthForm = <T extends FieldValues>({
 
         {formType === "SIGN_IN" ? (
           <p>
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link
               href={ROUTES.SIGN_UP}
               className="paragraph-semibold primary-text-gradient"
