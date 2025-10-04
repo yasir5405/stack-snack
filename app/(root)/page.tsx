@@ -7,10 +7,11 @@ const Page = async () => {
   console.log(session);
 
   return (
-    <div className="py-20">
-      <h1 className="">Hello</h1>
-      <h1 className="h1-bold font-space-grotesk flex">Hello again</h1>
-      <h1>{JSON.stringify(session)}</h1>
+    <div className="">
+      <h1 className="h1-bold font-space-grotesk">
+        Welcome to the world of NextJS
+      </h1>
+      {/* <h1>{JSON.stringify(session)}</h1> */}
       <LogoutButton />
     </div>
   );

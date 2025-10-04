@@ -8,6 +8,7 @@ const LogoutButton = () => {
       onClick={async () => {
         await signOut({ callbackUrl: ROUTES.SIGN_IN });
       }}
+      className="border border-light-400 p-3 rounded-full cursor-pointer"
     >
       Logout
     </button>
