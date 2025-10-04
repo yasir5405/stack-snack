@@ -16,7 +16,7 @@ export const sidebarLinks = [
   },
   {
     imgURL: "/icons/suitcase.svg",
-    route: "/jobs",
+    route: "/find-jobs",
     label: "Find Jobs",
   },
   {
@@ -31,7 +31,7 @@ export const sidebarLinks = [
   },
   {
     imgURL: "/icons/question.svg",
-    route: "/ask-question",
+    route: "/ask-a-question",
     label: "Ask a question",
   },
 ];
