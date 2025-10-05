@@ -1,6 +1,7 @@
 import ROUTES from "@/constants/route";
 import Image from "next/image";
 import Link from "next/link";
+import TagCard from "../cards/TagCard";
 
 const RightSidebar = () => {
   const hotQuestions = [
@@ -15,6 +16,15 @@ const RightSidebar = () => {
     },
     { _id: "4", title: "How to manage global state in React?" },
     { _id: "5", title: "What are React Server Components?" },
+  ];
+
+  const popularTags = [
+    { _id: "1", name: "react", questions: 100 },
+    { _id: "2", name: "typescript", questions: 80 },
+    { _id: "3", name: "nextjs", questions: 65 },
+    { _id: "4", name: "javascript", questions: 120 },
+    { _id: "5", name: "redux", questions: 50 },
+    { _id: "6", name: "nodejs", questions: 70 },
   ];
 
   return (
@@ -39,6 +49,23 @@ const RightSidebar = () => {
                 className="invert-colors"
               />
             </Link>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-16">
+        <h3 className="h3-bold text-dark200_light900">Popular tags</h3>
+
+        <div className="mt-7 flex flex-col gap-4">
+          {popularTags.map(({ _id, name, questions }) => (
+            <TagCard
+              key={_id}
+              _id={_id}
+              name={name}
+              questions={questions}
+              showCount
+              compact
+            />
           ))}
         </div>
       </div>
