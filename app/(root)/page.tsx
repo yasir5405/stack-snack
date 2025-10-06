@@ -1,3 +1,4 @@
+import QuestionCard from "@/components/cards/QuestionCard";
 import HomeFilter from "@/components/filters/HomeFilter";
 import LogoutButton from "@/components/LogoutButton";
 import LocalSearch from "@/components/search/LocalSearch";
@@ -14,7 +15,12 @@ const questions = [
       { _id: "1", name: "React" },
       { _id: "2", name: "Javascript" },
     ],
-    author: { _id: "1", name: "Yasir Naseem" },
+    author: {
+      _id: "1",
+      name: "Yasir Naseem",
+      image:
+        "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740&q=80",
+    },
     upvotes: 10,
     answers: 4,
     views: 100,
@@ -29,7 +35,12 @@ const questions = [
       { _id: "3", name: "TypeScript" },
       { _id: "4", name: "Next.js" },
     ],
-    author: { _id: "2", name: "Alex Kim" },
+    author: {
+      _id: "2",
+      name: "Alex Kim",
+      image:
+        "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740&q=80",
+    },
     upvotes: 15,
     answers: 2,
     views: 80,
@@ -44,7 +55,12 @@ const questions = [
       { _id: "5", name: "Tailwind CSS" },
       { _id: "1", name: "React" },
     ],
-    author: { _id: "3", name: "Priya Singh" },
+    author: {
+      _id: "3",
+      name: "Priya Singh",
+      image:
+        "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740&q=80",
+    },
     upvotes: 7,
     answers: 3,
     views: 60,
@@ -93,8 +109,8 @@ const Page = async ({ searchParams }: SearchParams) => {
       </section>
       <HomeFilter />
       <div className="mt-10 flex w-full flex-col gap-6">
-        {filteredQuestions.map((question) => (
-          <h1 key={question._id}>{question.title}</h1>
+        {filteredQuestions.map((question, idx) => (
+          <QuestionCard key={idx} question={question} />
         ))}
       </div>
       <LogoutButton />
