@@ -1,11 +1,11 @@
+import { authOptions } from "@/auth";
 import QuestionCard from "@/components/cards/QuestionCard";
 import HomeFilter from "@/components/filters/HomeFilter";
 import LogoutButton from "@/components/LogoutButton";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/route";
-import { api } from "@/lib/api";
-import handleError from "@/lib/handlers/error";
+import { getServerSession } from "next-auth";
 import Link from "next/link";
 
 const questions = [
@@ -74,19 +74,11 @@ interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
 }
 
-const test = async () => {
-  try {
-    return await api.users.getAll();
-  } catch (error) {
-    return handleError(error);
-  }
-};
-
 const Page = async ({ searchParams }: SearchParams) => {
   const { query = "", filter = "" } = await searchParams;
 
-  const users = await test();
-  console.log(users);
+  const session = await getServerSession(authOptions);
+  console.log("Session: ", session);
 
   const filteredQuestions = questions.filter((question) => {
     const matchesQuery = question.title
