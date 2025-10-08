@@ -4,6 +4,8 @@ import LogoutButton from "@/components/LogoutButton";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/route";
+import { api } from "@/lib/api";
+import handleError from "@/lib/handlers/error";
 import Link from "next/link";
 
 const questions = [
@@ -72,8 +74,19 @@ interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
 }
 
+const test = async () => {
+  try {
+    return await api.users.getAll();
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
 const Page = async ({ searchParams }: SearchParams) => {
   const { query = "", filter = "" } = await searchParams;
+
+  const users = await test();
+  console.log(users);
 
   const filteredQuestions = questions.filter((question) => {
     const matchesQuery = question.title

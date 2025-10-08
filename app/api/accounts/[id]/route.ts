@@ -40,6 +40,7 @@ export async function DELETE(
   }
 
   try {
+    await dbConnect();
     const account = await Account.findByIdAndDelete(id);
     if (!account) throw new NotFoundError("Account");
 
