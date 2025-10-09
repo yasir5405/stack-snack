@@ -9,7 +9,18 @@ const nextConfig: NextConfig = {
         hostname: "img.freepik.com",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        port: "",
+      },
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+        port: "",
+      },
     ],
+    qualities: [75, 100],
   },
 };
 
