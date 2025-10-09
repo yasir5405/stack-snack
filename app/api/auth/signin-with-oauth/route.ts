@@ -4,7 +4,6 @@ import handleError from "@/lib/handlers/error";
 import { ValidationError } from "@/lib/http-errors";
 import dbConnect from "@/lib/mongoose";
 import { SignInWithOAuthSchema } from "@/lib/validations";
-import { APIErrorResponse } from "@/types/global";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 import slugify from "slugify";
@@ -96,6 +95,6 @@ export async function POST(req: Request) {
     await session.abortTransaction();
     return handleError(error, "api") as APIErrorResponse;
   } finally {
-    session.endSession();
+    await session.endSession();
   }
 }

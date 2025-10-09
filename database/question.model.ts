@@ -9,18 +9,19 @@ export interface IQuestion {
   downvotes?: number;
   answers?: number;
   author: Types.ObjectId;
+  createdAt?: Date;
 }
 export interface IQuestionDoc extends IQuestion, Document {}
 const QuestionSchema = new Schema<IQuestion>(
   {
     title: { type: String, required: true },
     content: { type: String, required: true },
-    tags: [{ type: Schema.Types.ObjectId, red: "Tags" }],
+    tags: [{ type: Schema.Types.ObjectId, ref: "Tag" }],
     views: { type: Number, default: 0 },
     upvotes: { type: Number, default: 0 },
     downvotes: { type: Number, default: 0 },
     answers: { type: Number, default: 0 },
-    author: { type: Schema.Types.ObjectId, red: "User", required: true },
+    author: { type: Schema.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true }
 );

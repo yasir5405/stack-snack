@@ -9,7 +9,7 @@ const questions = [
   {
     _id: "1",
     title: "How to learn React",
-    description: "I want to learn React, can anyone help me?",
+    content: "I want to learn React, can anyone help me?",
     tags: [
       { _id: "1", name: "React" },
       { _id: "2", name: "Javascript" },
@@ -21,6 +21,7 @@ const questions = [
         "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740&q=80",
     },
     upvotes: 10,
+    downvotes: 2,
     answers: 4,
     views: 100,
     createdAt: new Date(),
@@ -28,7 +29,7 @@ const questions = [
   {
     _id: "2",
     title: "Best practices for TypeScript in Next.js",
-    description:
+    content:
       "What are some recommended patterns for using TypeScript with Next.js?",
     tags: [
       { _id: "3", name: "TypeScript" },
@@ -41,6 +42,7 @@ const questions = [
         "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740&q=80",
     },
     upvotes: 15,
+    downvotes: 1,
     answers: 2,
     views: 80,
     createdAt: new Date(),
@@ -48,7 +50,7 @@ const questions = [
   {
     _id: "3",
     title: "How to style components in Tailwind CSS",
-    description:
+    content:
       "How do you organize and reuse styles with Tailwind CSS in a React project?",
     tags: [
       { _id: "5", name: "Tailwind CSS" },
@@ -61,6 +63,7 @@ const questions = [
         "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740&q=80",
     },
     upvotes: 7,
+    downvotes: 3,
     answers: 3,
     views: 60,
     createdAt: new Date(),

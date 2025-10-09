@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const devIconClassName = (techName: string) => {
+export const devIconClassName = (techName: string = "") => {
   const normalizedTechName = techName.replace(/[ .]/g, "").toLowerCase();
 
   return techMap[normalizedTechName]
