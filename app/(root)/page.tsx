@@ -3,91 +3,36 @@ import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/route";
+import { getQuestions } from "@/lib/actions/question.action";
 import Link from "next/link";
-
-const questions = [
-  {
-    _id: "1",
-    title: "How to learn React",
-    content: "I want to learn React, can anyone help me?",
-    tags: [
-      { _id: "1", name: "React" },
-      { _id: "2", name: "Javascript" },
-    ],
-    author: {
-      _id: "1",
-      name: "Yasir Naseem",
-      image:
-        "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740&q=80",
-    },
-    upvotes: 10,
-    downvotes: 2,
-    answers: 4,
-    views: 100,
-    createdAt: new Date(),
-  },
-  {
-    _id: "2",
-    title: "Best practices for TypeScript in Next.js",
-    content:
-      "What are some recommended patterns for using TypeScript with Next.js?",
-    tags: [
-      { _id: "3", name: "TypeScript" },
-      { _id: "4", name: "Next.js" },
-    ],
-    author: {
-      _id: "2",
-      name: "Alex Kim",
-      image:
-        "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740&q=80",
-    },
-    upvotes: 15,
-    downvotes: 1,
-    answers: 2,
-    views: 80,
-    createdAt: new Date(),
-  },
-  {
-    _id: "3",
-    title: "How to style components in Tailwind CSS",
-    content:
-      "How do you organize and reuse styles with Tailwind CSS in a React project?",
-    tags: [
-      { _id: "5", name: "Tailwind CSS" },
-      { _id: "1", name: "React" },
-    ],
-    author: {
-      _id: "3",
-      name: "Priya Singh",
-      image:
-        "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740&q=80",
-    },
-    upvotes: 7,
-    downvotes: 3,
-    answers: 3,
-    views: 60,
-    createdAt: new Date(),
-  },
-];
 
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
 }
 
 const Page = async ({ searchParams }: SearchParams) => {
-  const { query = "", filter = "" } = await searchParams;
+  const { query, filter, page, pageSize } = await searchParams;
 
-  const filteredQuestions = questions.filter((question) => {
-    const matchesQuery = question.title
-      .toLowerCase()
-      .includes(query?.toLowerCase());
-    const matchesFilter =
-      !filter ||
-      question.tags.some(
-        (tag) => tag.name.toLowerCase() === filter.toLowerCase()
-      );
-    return matchesQuery && matchesFilter;
+  const { success, data, error } = await getQuestions({
+    filter: filter || "",
+    page: +page || 1,
+    pageSize: +pageSize || 10,
+    query: query || "",
   });
+
+  const { questions } = data || {};
+
+  // const filteredQuestions = questions.filter((question) => {
+  //   const matchesQuery = question.title
+  //     .toLowerCase()
+  //     .includes(query?.toLowerCase());
+  //   const matchesFilter =
+  //     filter ||
+  //     question.tags.some(
+  //       (tag) => tag.name.toLowerCase() === filter.toLowerCase()
+  //     );
+  //   return matchesQuery && matchesFilter;
+  // });
 
   return (
     <>
@@ -110,11 +55,26 @@ const Page = async ({ searchParams }: SearchParams) => {
         />
       </section>
       <HomeFilter />
-      <div className="mt-10 flex w-full flex-col gap-6">
-        {filteredQuestions.map((question, idx) => (
-          <QuestionCard key={idx} question={question} />
-        ))}
-      </div>
+
+      {success ? (
+        <div className="mt-10 flex w-full flex-col gap-6">
+          {questions && questions.length > 0 ? (
+            questions.map((question, idx) => (
+              <QuestionCard key={idx} question={question} />
+            ))
+          ) : (
+            <div className="mt-10 flex items-center justify-center w-full">
+              <p className="text-dark400_light700">No questions found</p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="mt-10 w-full flex items-center justify-center">
+          <p className="text-dark400_light700">
+            {error?.message || "Failed to fetch questions"}
+          </p>
+        </div>
+      )}
     </>
   );
 };

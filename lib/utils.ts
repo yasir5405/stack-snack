@@ -14,9 +14,11 @@ export const devIconClassName = (techName: string = "") => {
     : "devicon-devicon-plain";
 };
 
-export const getTimeStamp = (date: Date): string => {
+export const getTimeStamp = (date: Date | string): string => {
+  const d = new Date(date); // ✅ handles both string and Date
   const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
+
+  const diffMs = now.getTime() - d.getTime();
 
   const seconds = Math.floor(diffMs / 1000);
   if (seconds === 0) return "just now";
