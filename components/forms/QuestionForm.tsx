@@ -1,7 +1,7 @@
 "use client";
 import { AskQuestionSchema } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useRef } from "react";
+import React, { useRef, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -18,6 +18,11 @@ import { Button } from "../ui/button";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import dynamic from "next/dynamic";
 import TagCard from "../cards/TagCard";
+import { createQuestion } from "@/lib/actions/question.action";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import ROUTES from "@/constants/route";
+import { Spinner } from "../ui/spinner";
 
 const Editor = dynamic(() => import("../editor/index"), {
   // Make sure we turn SSR off
@@ -25,7 +30,11 @@ const Editor = dynamic(() => import("../editor/index"), {
 });
 
 const QuestionForm = () => {
+  const router = useRouter();
+
   const editorRef = useRef<MDXEditorMethods>(null);
+  const [isPending, startTransition] = useTransition();
+
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema),
     defaultValues: {
@@ -74,8 +83,26 @@ const QuestionForm = () => {
     }
   };
 
-  const handleCreateQuestion = (data: z.infer<typeof AskQuestionSchema>) => {
-    console.log(data);
+  const handleCreateQuestion = async (
+    data: z.infer<typeof AskQuestionSchema>
+  ) => {
+    startTransition(async () => {
+      const result = await createQuestion(data);
+
+      if (result.success) {
+        toast.success("Success", {
+          description: "Question created succssfully.",
+        });
+
+        if (result.data) router.push(ROUTES.QUESTION(result.data?._id));
+      } else {
+        toast.error(`Error ${result.status}`, {
+          description:
+            result.error?.message ||
+            "Something went wrong while submitting question.",
+        });
+      }
+    });
   };
 
   return (
@@ -174,9 +201,17 @@ const QuestionForm = () => {
         <div className="mt-16 flex justify-end">
           <Button
             type="submit"
+            disabled={isPending}
             className="primary-gradient !text-light-900 w-fit"
           >
-            Ask Question
+            {isPending ? (
+              <>
+                <Spinner className="mr-2 size-4" />
+                <span>Submitting...</span>
+              </>
+            ) : (
+              <>Ask Question</>
+            )}
           </Button>
         </div>
       </form>
