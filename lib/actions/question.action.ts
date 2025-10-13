@@ -203,6 +203,7 @@ export async function getQuestion(
   try {
     const question = await Question.findById(questionId)
       .populate("tags")
+      .populate("author", "_id name image")
       .lean();
 
     if (!question) throw new Error("Question not found.");
@@ -212,87 +213,6 @@ export async function getQuestion(
     return handleError(error) as ErrorResponse;
   }
 }
-
-// export async function getQuestions(
-//   params: PaginatedSearchParams
-// ): Promise<ActionResponse<{ questions: Question[]; isNext: boolean }>> {
-//   const validationResult = await action({
-//     params: params,
-//     schema: PaginatedSearchParamsSchema,
-//   });
-
-//   if (validationResult instanceof Error) {
-//     return handleError(validationResult) as ErrorResponse;
-//   }
-
-//   const { page = 1, pageSize = 10, query, filter } = params;
-//   const skip = (Number(page) - 1) * pageSize;
-//   const limit = Number(pageSize);
-
-//   const filterQuery: FilterQuery<typeof Question> = {};
-
-//   if (filter === "recommended")
-//     return { success: true, data: { questions: [], isNext: false } };
-
-//   if (query) {
-//     filterQuery.$or = [
-//       { title: { $regex: new RegExp(query, "i") } },
-//       { content: { $regex: new RegExp(query, "i") } },
-//     ];
-//   }
-
-//   const sortCriteria = {};
-
-//   switch (filter) {
-//     case "newest": {
-//       sortCriteria: {
-//         createdAt: -1;
-//       }
-//       break;
-//     }
-
-//     case "unanswered": {
-//       filterQuery.answers = 0;
-//       sortCriteria: {
-//         createdAt: -1;
-//       }
-//       break;
-//     }
-
-//     case "popular": {
-//       sortCriteria: {
-//         upvotes: -1;
-//       }
-//       break;
-//     }
-//     default:
-//       sortCriteria: {
-//         createdAt: -1;
-//         break;
-//       }
-//   }
-
-//   try {
-//     const totalQuestions = await Question.countDocuments(filterQuery);
-
-//     const questions = await Question.find(filterQuery)
-//       .populate("tags", "name")
-//       .populate("author", "name image")
-//       .lean()
-//       .sort(sortCriteria)
-//       .skip(skip)
-//       .limit(limit);
-
-//     const isNext = totalQuestions > skip + questions.length;
-
-//     return {
-//       success: true,
-//       data: { questions: JSON.parse(JSON.stringify(questions)), isNext },
-//     };
-//   } catch (error) {
-//     return handleError(error) as ErrorResponse;
-//   }
-// }
 
 export async function getQuestions(params: PaginatedSearchParams): Promise<
   ActionResponse<{
