@@ -3,7 +3,11 @@
 import { Answer, Question, Vote } from "@/database";
 import action from "../action";
 import handleError from "../handlers/error";
-import { CreateVoteSchema, UpdateVoteCountSchema } from "../validations";
+import {
+  CreateVoteSchema,
+  HasVotedSchema,
+  UpdateVoteCountSchema,
+} from "../validations";
 import mongoose, { ClientSession } from "mongoose";
 
 const updateVoteCount = async (
@@ -131,5 +135,47 @@ export const createVote = async (
     return handleError(error) as ErrorResponse;
   } finally {
     session.endSession();
+  }
+};
+
+export const hasVoted = async (
+  params: HasVotedParams
+): Promise<ActionResponse<HasVotedResponse>> => {
+  const validationResult = await action({
+    params,
+    schema: HasVotedSchema,
+    authorize: true,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { targetId, targetType } = params;
+  const userId = validationResult.session?.user.id;
+
+  try {
+    const vote = await Vote.findOne({
+      author: userId,
+      actionId: targetId,
+      actionType: targetType,
+    });
+
+    if (!vote) {
+      return {
+        success: false,
+        data: { hasdownVoted: false, hasupVoted: false },
+      };
+    }
+
+    return {
+      success: true,
+      data: {
+        hasupVoted: vote.voteType === "upvote",
+        hasdownVoted: vote.voteType === "downvote",
+      },
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
   }
 };
