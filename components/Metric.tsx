@@ -35,6 +35,8 @@ const Metric = ({
         className={`rounded-full object-contain ${imageStyles}`}
       />
 
+      <p className="hidden">{isAuthor}</p>
+
       <p className={`${textStyles} flex items-center gap-1`}>
         {value}
         {title ? (
