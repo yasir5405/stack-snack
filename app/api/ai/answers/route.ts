@@ -19,6 +19,32 @@ export async function POST(req: Request) {
       throw new ValidationError(validatedData.error.flatten().fieldErrors);
     }
 
+    function sanitizeMarkdown(markdown: string): string {
+      // Normalize line endings
+      markdown = markdown.replace(/\r\n/g, "\n");
+
+      // Escape nested backticks inside code blocks
+      markdown = markdown.replace(/```([\s\S]*?)```/g, (match, code) => {
+        const safeCode = code.replace(/```/g, "ʼʼʼ"); // visually similar, prevents MDX parsing issues
+        return `\`\`\`txt\n${safeCode.trim()}\n\`\`\``;
+      });
+
+      // Ensure all code blocks have a language identifier
+      markdown = markdown.replace(/```(\s*\n)/g, "```txt$1");
+
+      // Close unbalanced ```
+      const openCount = (markdown.match(/```/g) || []).length;
+      if (openCount % 2 !== 0) markdown += "\n```";
+
+      // Remove zero-width & BOM chars (can break MDX parse)
+      markdown = markdown.replace(/[\u200B-\u200D\uFEFF]/g, "");
+
+      // MDX doesn't like JSX-like tags in markdown if unescaped
+      markdown = markdown.replace(/<([^>]+)>/g, "&lt;$1&gt;");
+
+      return markdown.trim();
+    }
+
     const { text } = await generateText({
       model: google("gemini-2.5-flash"),
       prompt: `Generate a markdown-formatted response to the following question: "${question}".
@@ -31,10 +57,19 @@ export async function POST(req: Request) {
 
       Prioritize the user's answer only if it's correct. If it's incomplete or incorrect, improve or correct it while keeping the response concise and to the point.
       Provide the final answer in markdown format.`,
-      system: `You are a helpful assistant that provides informative responses in markdown format. Use appropriate markdown syntax for headings, titles, lists, code blocks, and emphasis where necessary. For code blocks, use short-form smaller case language identifiers (e.g., 'js' for JavaScript, 'py' for Python, 'ts' for TypeScript, 'html' for HTML, 'css' for CSS, etc.). Try not to return response which would cause this error: Parsing of the following markdown structure failed: {"type":"code","name":"N/A"}. You can fix the errors in source mode and switch to rich text mode when you are ready.`,
+      system: `You are a helpful assistant that provides informative responses in markdown format.
+- Always close code blocks with triple backticks.
+- Always specify a language after opening code fences (e.g. \`\`\`js, \`\`\`py, \`\`\`ts, \`\`\`html, or use \`\`\`txt if unknown).
+- Never leave dangling or empty code fences.
+- Avoid returning structures that may cause JSON parsing or markdown rendering errors.`,
     });
 
-    return NextResponse.json({ success: true, data: text }, { status: 200 });
+    const sanitized = sanitizeMarkdown(text);
+
+    return NextResponse.json(
+      { success: true, data: sanitized },
+      { status: 200 }
+    );
   } catch (error) {
     return handleError(error, "api") as APIErrorResponse;
   }
