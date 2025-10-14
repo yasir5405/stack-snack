@@ -1,3 +1,4 @@
+import { authOptions } from "@/auth";
 import AllAnswers from "@/components/answers/AllAnswers";
 import TagCard from "@/components/cards/TagCard";
 import Preview from "@/components/editor/Preview";
@@ -8,11 +9,13 @@ import ROUTES from "@/constants/route";
 import { getAnswers } from "@/lib/actions/answer.action";
 import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
+import { getServerSession } from "next-auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
+  const session = await getServerSession(authOptions);
   const { id } = await params;
 
   const { success, data: question } = await getQuestion({ questionId: id });
@@ -112,7 +115,12 @@ const QuestionDetails = async ({ params }: RouteParams) => {
       </section>
 
       <section className="my-5 ">
-        <AnswerForm questionId={question._id} />
+        <AnswerForm
+          questionId={question._id}
+          questionTitle={question.title}
+          questionContent={question.content}
+          session={session}
+        />
       </section>
     </>
   );
