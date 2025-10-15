@@ -3,8 +3,27 @@ import UserAvatar from "../UserAvatar";
 import ROUTES from "@/constants/route";
 import { getTimeStamp } from "@/lib/utils";
 import Preview from "../editor/Preview";
+import { Suspense } from "react";
+import Votes from "../votes/Votes";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
+import { hasVoted } from "@/lib/actions/vote.action";
 
-const AnswerCard = ({ _id, author, content, createdAt }: Answer) => {
+const AnswerCard = async ({
+  _id,
+  author,
+  content,
+  createdAt,
+  downvotes,
+  upvotes,
+}: Answer) => {
+  const session = await getServerSession(authOptions);
+
+  const hasVotedPromise = hasVoted({
+    targetId: _id,
+    targetType: "answer",
+  });
+
   return (
     <article className="light-border border-b py-10">
       <span id={JSON.stringify(_id)} className="hash-span" />
@@ -33,7 +52,18 @@ const AnswerCard = ({ _id, author, content, createdAt }: Answer) => {
           </Link>
         </div>
 
-        <div className="flex justify-end">Votes</div>
+        <div className="flex justify-end">
+          <Suspense fallback={<div>Loading...</div>}>
+            <Votes
+              upvotes={upvotes}
+              downvotes={downvotes}
+              session={session}
+              hasVotedPromise={hasVotedPromise}
+              targetType="answer"
+              targetId={_id}
+            />
+          </Suspense>
+        </div>
       </div>
 
       <Preview content={content} />
