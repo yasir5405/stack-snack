@@ -106,6 +106,15 @@ export const createVote = async (
           {
             targetId: targetId,
             targetType: targetType,
+            voteType: existingVote.voteType,
+            change: -1,
+          },
+          session
+        );
+        await updateVoteCount(
+          {
+            targetId: targetId,
+            targetType: targetType,
             voteType: voteType,
             change: 1,
           },
