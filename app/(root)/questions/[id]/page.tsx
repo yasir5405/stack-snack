@@ -9,11 +9,13 @@ import Votes from "@/components/votes/Votes";
 import ROUTES from "@/constants/route";
 import { getAnswers } from "@/lib/actions/answer.action";
 import { getQuestion, incrementViews } from "@/lib/actions/question.action";
+import { hasVoted } from "@/lib/actions/vote.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
+import { Suspense } from "react";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const session = await getServerSession(authOptions);
@@ -38,6 +40,11 @@ const QuestionDetails = async ({ params }: RouteParams) => {
     pageSize: 10,
   });
 
+  const hasVotedPromise = hasVoted({
+    targetId: question._id,
+    targetType: "question",
+  });
+
   const { answers, author, createdAt, tags, views, content, title } = question;
   return (
     <>
@@ -60,13 +67,16 @@ const QuestionDetails = async ({ params }: RouteParams) => {
           </div>
 
           <div className="flex justify-end">
-            <Votes
-              upvotes={question.upvotes}
-              downvotes={question.downvotes}
-              hasupVoted={true}
-              hasdownVoted={false}
-              session={session}
-            />
+            <Suspense fallback={<div>Loading...</div>}>
+              <Votes
+                upvotes={question.upvotes}
+                downvotes={question.downvotes}
+                session={session}
+                hasVotedPromise={hasVotedPromise}
+                targetType="question"
+                targetId={question._id}
+              />
+            </Suspense>
           </div>
         </div>
 
