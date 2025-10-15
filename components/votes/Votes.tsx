@@ -3,7 +3,7 @@ import { createVote } from "@/lib/actions/vote.action";
 import { formatNumber } from "@/lib/utils";
 import { Session } from "next-auth";
 import Image from "next/image";
-import React, { use, useState } from "react";
+import { use, useState } from "react";
 import { toast } from "sonner";
 
 interface Props {

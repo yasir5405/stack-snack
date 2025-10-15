@@ -1,10 +1,12 @@
 "use server";
 
 import { FilterQuery } from "mongoose";
-import action from "../action";
+
+import { User } from "@/database";
+
 import handleError from "../handlers/error";
 import { PaginatedSearchParamsSchema } from "../validations";
-import { User } from "@/database";
+import action from "../action";
 
 export async function getUsers(
   params: PaginatedSearchParams
@@ -36,24 +38,16 @@ export async function getUsers(
 
   switch (filter) {
     case "newest":
-      sortCriteria = {
-        createdAt: -1,
-      };
+      sortCriteria = { createdAt: -1 };
       break;
     case "oldest":
-      sortCriteria = {
-        createdAt: 1,
-      };
+      sortCriteria = { createdAt: 1 };
       break;
     case "popular":
-      sortCriteria = {
-        reputation: -1,
-      };
+      sortCriteria = { reputation: -1 };
       break;
     default:
-      sortCriteria = {
-        reputation: -1,
-      };
+      sortCriteria = { createdAt: -1 };
       break;
   }
 
@@ -69,7 +63,10 @@ export async function getUsers(
 
     return {
       success: true,
-      data: JSON.parse(JSON.stringify(users)),
+      data: {
+        users: JSON.parse(JSON.stringify(users)),
+        isNext,
+      },
     };
   } catch (error) {
     return handleError(error) as ErrorResponse;
