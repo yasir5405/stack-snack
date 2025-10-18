@@ -3,7 +3,7 @@ const ROUTES = {
   SIGN_IN: "/sign-in",
   SIGN_UP: "/sign-up",
   ASK_QUESTION: "/ask-a-question",
-  COLLECTION: "/collection",
+  COLLECTION: "/collections",
   COMMUNITY: "/community",
   TAGS: "/tags",
   JOBS: "/jobs",
