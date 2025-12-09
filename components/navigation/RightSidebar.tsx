@@ -2,21 +2,11 @@ import ROUTES from "@/constants/route";
 import Image from "next/image";
 import Link from "next/link";
 import TagCard from "../cards/TagCard";
+import { getHotQuestions } from "@/lib/actions/question.action";
+import DataRenderer from "../DataRenderer";
 
-const RightSidebar = () => {
-  const hotQuestions = [
-    { _id: "1", title: "How to create a custom hook in React?" },
-    {
-      _id: "2",
-      title: "What is the difference between useEffect and useLayoutEffect?",
-    },
-    {
-      _id: "3",
-      title: "How do you optimize performance in a React application?",
-    },
-    { _id: "4", title: "How to manage global state in React?" },
-    { _id: "5", title: "What are React Server Components?" },
-  ];
+const RightSidebar = async () => {
+  const { success, data: hotQuestions, error } = await getHotQuestions();
 
   const popularTags = [
     { _id: "1", name: "react", questions: 100 },
@@ -32,7 +22,39 @@ const RightSidebar = () => {
       <div>
         <h3 className="h3-bold text-dark200_light900">Top Questions</h3>
 
-        <div className="mt-7 flex w-full flex-col gap-[30px]">
+        <DataRenderer
+          data={hotQuestions}
+          empty={{
+            title: "No questions found.",
+            message: "No questions have been asked yet.",
+          }}
+          success={success}
+          error={error}
+          render={(hotQuestions) => (
+            <div className="mt-7 flex w-full flex-col gap-[30px]">
+              {hotQuestions.map((question) => (
+                <Link
+                  key={question._id}
+                  href={ROUTES.QUESTION(question._id)}
+                  className="flex cursor-pointer items-center justify-between gap-7"
+                >
+                  <p className="body-medium text-dark500_light700 line-clamp-2">
+                    {question.title}
+                  </p>
+
+                  <Image
+                    src={"/icons/chevron-right.svg"}
+                    alt="Chevron"
+                    width={20}
+                    height={20}
+                    className="invert-colors"
+                  />
+                </Link>
+              ))}
+            </div>
+          )}
+        />
+        {/* <div className="mt-7 flex w-full flex-col gap-[30px]">
           {hotQuestions.map((item) => (
             <Link
               key={item._id}
@@ -50,7 +72,7 @@ const RightSidebar = () => {
               />
             </Link>
           ))}
-        </div>
+        </div> */}
       </div>
 
       <div className="mt-16">
