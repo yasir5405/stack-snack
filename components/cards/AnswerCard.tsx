@@ -1,7 +1,7 @@
 import Link from "next/link";
 import UserAvatar from "../UserAvatar";
 import ROUTES from "@/constants/route";
-import { getTimeStamp } from "@/lib/utils";
+import { cn, getTimeStamp } from "@/lib/utils";
 import Preview from "../editor/Preview";
 import { Suspense } from "react";
 import Votes from "../votes/Votes";
@@ -9,6 +9,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 import { hasVoted } from "@/lib/actions/vote.action";
 
+interface Props extends Answer {
+  containerClasses?: string;
+  showReadMore?: boolean;
+}
 const AnswerCard = async ({
   _id,
   author,
@@ -16,7 +20,10 @@ const AnswerCard = async ({
   createdAt,
   downvotes,
   upvotes,
-}: Answer) => {
+  question,
+  containerClasses,
+  showReadMore = false,
+}: Props) => {
   const session = await getServerSession(authOptions);
 
   const hasVotedPromise = hasVoted({
@@ -25,8 +32,8 @@ const AnswerCard = async ({
   });
 
   return (
-    <article className="light-border border-b py-10">
-      <span id={JSON.stringify(_id)} className="hash-span" />
+    <article className={(cn("light-border border-b py-10"), containerClasses)}>
+      <span id={`answer-${_id}`} className="hash-span" />
 
       <div className="mb-5 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
         <div className="flex flex-1 items-start gap-1 sm:items-center">
@@ -67,6 +74,15 @@ const AnswerCard = async ({
       </div>
 
       <Preview content={content} />
+
+      {showReadMore && (
+        <Link
+          href={`/questions/${question}#answer-${_id}`}
+          className="body-semibold relative z-10 font-space-grotesk text-primary-500"
+        >
+          <p className="mt-1">Read more...</p>
+        </Link>
+      )}
     </article>
   );
 };
