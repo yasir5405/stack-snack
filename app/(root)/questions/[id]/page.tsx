@@ -19,9 +19,11 @@ import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { Suspense } from "react";
 
-const QuestionDetails = async ({ params }: RouteParams) => {
+const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
   const session = await getServerSession(authOptions);
   const { id } = await params;
+
+  const { page, pageSize, filter } = await searchParams;
 
   const { success, data: question } = await getQuestion({ questionId: id });
 
@@ -37,9 +39,9 @@ const QuestionDetails = async ({ params }: RouteParams) => {
     error: answersError,
   } = await getAnswers({
     questionId: id,
-    filter: "latest",
-    page: 1,
-    pageSize: 10,
+    filter,
+    page: Number(page) || 1,
+    pageSize: Number(pageSize) || 10,
   });
 
   const hasVotedPromise = hasVoted({
