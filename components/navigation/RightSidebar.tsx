@@ -7,21 +7,10 @@ import DataRenderer from "../DataRenderer";
 import { getPopularTags } from "@/lib/actions/tag.action";
 
 const RightSidebar = async () => {
-  const { success, data: hotQuestions, error } = await getHotQuestions();
-  const {
-    success: tagSuccess,
-    data: popularTags,
-    error: tagError,
-  } = await getPopularTags();
-
-  // const popularTags = [
-  //   { _id: "1", name: "react", questions: 100 },
-  //   { _id: "2", name: "typescript", questions: 80 },
-  //   { _id: "3", name: "nextjs", questions: 65 },
-  //   { _id: "4", name: "javascript", questions: 120 },
-  //   { _id: "5", name: "redux", questions: 50 },
-  //   { _id: "6", name: "nodejs", questions: 70 },
-  // ];
+  const [
+    { success, data: hotQuestions, error },
+    { success: tagSuccess, data: popularTags, error: tagError },
+  ] = await Promise.all([getHotQuestions(), getPopularTags()]);
 
   return (
     <section className="pt-24 custom-scrollbar background-light900_dark200 light-border sticky right-0 top-0 flex h-screen w-[350px] flex-col gap-6  overflow-y-auto border-l p-6 shadow-light-300 dark:shadow-none max-xl:hidden">
