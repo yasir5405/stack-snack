@@ -8,10 +8,12 @@ import Votes from "../votes/Votes";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 import { hasVoted } from "@/lib/actions/vote.action";
+import EditDeleteAction from "../user/EditDeleteAction";
 
 interface Props extends Answer {
   containerClasses?: string;
   showReadMore?: boolean;
+  showActionBtns?: boolean;
 }
 const AnswerCard = async ({
   _id,
@@ -23,6 +25,7 @@ const AnswerCard = async ({
   question,
   containerClasses,
   showReadMore = false,
+  showActionBtns = false,
 }: Props) => {
   const session = await getServerSession(authOptions);
 
@@ -32,8 +35,19 @@ const AnswerCard = async ({
   });
 
   return (
-    <article className={(cn("light-border border-b py-10"), containerClasses)}>
+    <article
+      className={cn(
+        "light-border border-b py-10 relative overflow-visible",
+        containerClasses
+      )}
+    >
       <span id={`answer-${_id}`} className="hash-span" />
+
+      {showActionBtns && (
+        <div className="flex-center absolute size-9 -right-2 -top-5 rounded-full">
+          <EditDeleteAction type="Answer" itemId={_id} />
+        </div>
+      )}
 
       <div className="mb-5 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
         <div className="flex flex-1 items-start gap-1 sm:items-center">
