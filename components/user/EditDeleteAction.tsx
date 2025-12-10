@@ -10,6 +10,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { deleteAnswer, deleteQuestion } from "@/lib/actions/question.action";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -27,17 +28,22 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
 
   const handleDelete = async () => {
     if (type === "Question") {
+      await deleteQuestion({ questionId: itemId });
+
       toast.success("Question deleted", {
         description: "Your question has been deleted successfully.",
       });
     } else if (type === "Answer") {
+      await deleteAnswer({ answerId: itemId });
       toast.success("Answer deleted", {
         description: "Your answers has been deleted successfully.",
       });
     }
   };
   return (
-    <div className={`flex items-center justify-end gap-3 max-sm:w-full ${type === "Answer" && 'gap-0 justify-center'}`}>
+    <div
+      className={`flex items-center justify-end gap-3 max-sm:w-full ${type === "Answer" && "gap-0 justify-center"}`}
+    >
       {type === "Question" && (
         <Image
           src="/icons/edit.svg"
