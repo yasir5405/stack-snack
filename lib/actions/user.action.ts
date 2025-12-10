@@ -2,7 +2,7 @@
 
 import { FilterQuery, PipelineStage, Types } from "mongoose";
 
-import { Answer, Question, Tag, User } from "@/database";
+import { Answer, Question, User } from "@/database";
 
 import handleError from "../handlers/error";
 import {
