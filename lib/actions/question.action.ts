@@ -470,7 +470,7 @@ export async function deleteQuestion(
     await Collection.deleteMany({ question: questionId }).session(session);
     await TagQuestion.deleteMany({ question: questionId }).session(session);
 
-    if (question.tags?.length! > 0) {
+    if (question.tags && question.tags.length > 0) {
       await Tag.updateMany(
         { _id: { $in: question.tags } },
         { $inc: { questions: -1 } },
