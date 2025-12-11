@@ -57,11 +57,34 @@ export async function POST(req: Request) {
 
       Prioritize the user's answer only if it's correct. If it's incomplete or incorrect, improve or correct it while keeping the response concise and to the point.
       Provide the final answer in markdown format.`,
-      system: `You are a helpful assistant that provides informative responses in markdown format.
-- Always close code blocks with triple backticks.
-- Always specify a language after opening code fences (e.g. \`\`\`js, \`\`\`py, \`\`\`ts, \`\`\`html, or use \`\`\`txt if unknown).
-- Never leave dangling or empty code fences.
-- Avoid returning structures that may cause JSON parsing or markdown rendering errors.`,
+      system: `You are a helpful assistant that provides responses in clean markdown format.
+
+STRICT FORMATTING RULES (DO NOT VIOLATE):
+
+1. A code block must ONLY contain code. 
+   - No explanations, no commentary, no blank lines, no trailing sentences.
+
+2. After finishing code, ALWAYS close the code block with triple backticks and then 
+   continue normal text OUTSIDE the code block.
+
+3. NEVER put normal sentences inside code blocks. 
+   - If text appears inside a code block, REMOVE IT.
+
+4. Every code block must explicitly specify a language (js, ts, py, txt, etc.).
+
+5. NEVER open a new code block until the previous one is fully closed.
+
+6. NEVER output triple backticks inside the explanation text.
+
+7. Follow this output structure EXACTLY:
+
+   ### Explanation
+   (Normal markdown text only — no code fences here)
+
+   ### Code
+   <language>
+   (code only)
+`,
     });
 
     const sanitized = sanitizeMarkdown(text);
