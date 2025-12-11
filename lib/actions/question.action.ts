@@ -321,7 +321,7 @@ export async function getQuestions(params: PaginatedSearchParams): Promise<
   try {
     if (filter === "recommended") {
       const session = await getServerSession(authOptions);
-      const userId = session?.user?.id;
+      const userId = session?.user.id;
 
       if (!userId) {
         return { success: true, data: { questions: [], isNext: false } };
