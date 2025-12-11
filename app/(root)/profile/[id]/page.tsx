@@ -5,6 +5,7 @@ import {
   getUser,
   getUserAnswers,
   getUserQuestions,
+  getUserStats,
   getUserTopTags,
 } from "@/lib/actions/user.action";
 import { getServerSession } from "next-auth";
@@ -39,7 +40,14 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
       </div>
     );
 
-  const { totalAnswers, totalQuestions, user } = data!;
+  const { user } = data!;
+
+  const { data: userStatsData } = await getUserStats({ userId: id });
+  const userStats = userStatsData || {
+    totalQuestions: 0,
+    totalAnswers: 0,
+    badges: { GOLD: 0, SILVER: 0, BRONZE: 0 },
+  };
 
   const {
     success: userQuestionsSuccess,
@@ -111,6 +119,7 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
                   title="Portfolio"
                 />
               )}
+
               {location && (
                 <ProfileLink imgUrl="/icons/location.svg" title="Location" />
               )}
@@ -142,13 +151,9 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
       </section>
 
       <Stats
-        totalQuestions={totalQuestions}
-        totalAnswers={totalAnswers}
-        badges={{
-          GOLD: 0,
-          SILVER: 0,
-          BRONZE: 0,
-        }}
+        totalQuestions={userStats.totalQuestions}
+        totalAnswers={userStats.totalAnswers}
+        badges={userStats.badges}
         reputationPoints={user.reputation || 0}
       />
 
