@@ -3,6 +3,7 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "@/context/Theme";
 import { Toaster } from "sonner";
+import NextTopLoader from "nextjs-toploader";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -42,6 +43,8 @@ export default function RootLayout({
       <body
         className={`${inter.className} ${spaceGrotesk.variable}  antialiased`}
       >
+        <NextTopLoader color="#ff7000" showSpinner={false} />
+
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

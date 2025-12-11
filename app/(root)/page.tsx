@@ -1,15 +1,85 @@
-import QuestionCard from "@/components/cards/QuestionCard";
-import DataRenderer from "@/components/DataRenderer";
-import CommonFilter from "@/components/filters/CommonFilter";
+// import HomeFilter from "@/components/filters/HomeFilter";
+// import Pagination from "@/components/Pagination";
+// import QuestionsList from "@/components/questions/QuestionsList";
+// import LocalSearch from "@/components/search/LocalSearch";
+// import QuestionCardSkeleton from "@/components/skeletons/QuestionCardSkeleton";
+// import { getQuestions } from "@/lib/actions/question.action";
+// import { Suspense } from "react";
+
+// interface SearchParams {
+//   searchParams: Promise<{ [key: string]: string }>;
+// }
+
+// const Page = async ({ searchParams }: SearchParams) => {
+//   const { query, filter, page, pageSize } = await searchParams;
+
+//   const parsedPage = Number(page) || 1;
+//   const parsedPageSize = Number(pageSize) || 10;
+
+//   // Get isNext for pagination
+//   const { data } = await getQuestions({
+//     filter: filter || "",
+//     page: parsedPage,
+//     pageSize: parsedPageSize,
+//     query: query || "",
+//   });
+
+//   const { isNext } = data || {};
+
+//   // Create unique key for Suspense boundary
+//   const questionsKey = `questions-${filter || "all"}-${query || "none"}-${parsedPage}`;
+
+//   return (
+//     <>
+//       <section className="w-full flex flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
+//         <h1 className="h1-bold text-dark100_light900">All Questions</h1>
+//         {/* Ask Question Button */}
+//       </section>
+
+//       <section className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
+//         <LocalSearch
+//           route="/"
+//           imgSrc="/icons/search.svg"
+//           placeholder="Search questions..."
+//           otherClasses="flex-1"
+//         />
+//         {/* Mobile Filter */}
+//       </section>
+
+//       <HomeFilter />
+
+//       {/* Suspense boundary with dynamic key to trigger loading on filter change */}
+//       <Suspense
+//         key={questionsKey}
+//         fallback={
+//           <div className="mt-10 flex w-full flex-col gap-6">
+//             {[1, 2, 3, 4, 5].map((i) => (
+//               <QuestionCardSkeleton key={i} />
+//             ))}
+//           </div>
+//         }
+//       >
+//         <QuestionsList
+//           filter={filter || ""}
+//           query={query || ""}
+//           page={parsedPage}
+//           pageSize={parsedPageSize}
+//         />
+//       </Suspense>
+
+//       <Pagination page={parsedPage} isNext={isNext || false} />
+//     </>
+//   );
+// };
+
+// export default Page;
+
 import HomeFilter from "@/components/filters/HomeFilter";
 import Pagination from "@/components/Pagination";
+import QuestionsList from "@/components/questions/QuestionsList";
 import LocalSearch from "@/components/search/LocalSearch";
-import { Button } from "@/components/ui/button";
-import { HomePageFilters } from "@/constants/filter";
-import ROUTES from "@/constants/route";
-import { EMPTY_QUESTION } from "@/constants/states";
-import { getQuestions } from "@/lib/actions/question.action";
-import Link from "next/link";
+import QuestionCardSkeleton from "@/components/skeletons/QuestionCardSkeleton";
+import { Suspense } from "react";
 
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
@@ -18,39 +88,19 @@ interface SearchParams {
 const Page = async ({ searchParams }: SearchParams) => {
   const { query, filter, page, pageSize } = await searchParams;
 
-  const { success, data, error } = await getQuestions({
-    filter: filter || "",
-    page: +page || 1,
-    pageSize: +pageSize || 10,
-    query: query || "",
-  });
+  const parsedPage = Number(page) || 1;
+  const parsedPageSize = Number(pageSize) || 10;
 
-  const { questions, isNext } = data || {};
-
-  // const filteredQuestions = questions.filter((question) => {
-  //   const matchesQuery = question.title
-  //     .toLowerCase()
-  //     .includes(query?.toLowerCase());
-  //   const matchesFilter =
-  //     filter ||
-  //     question.tags.some(
-  //       (tag) => tag.name.toLowerCase() === filter.toLowerCase()
-  //     );
-  //   return matchesQuery && matchesFilter;
-  // });
+  // Create unique key for Suspense boundary
+  const questionsKey = `questions-${filter || "all"}-${query || "none"}-${parsedPage}`;
 
   return (
     <>
       <section className="w-full flex flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
         <h1 className="h1-bold text-dark100_light900">All Questions</h1>
-
-        <Button
-          className="primary-gradient min-h-[46px] px-4 py-3 !text-light-900"
-          asChild
-        >
-          <Link href={ROUTES.ASK_QUESTION}>Ask a Question</Link>
-        </Button>
+        {/* Ask Question Button */}
       </section>
+
       <section className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearch
           route="/"
@@ -58,29 +108,29 @@ const Page = async ({ searchParams }: SearchParams) => {
           placeholder="Search questions..."
           otherClasses="flex-1"
         />
-        <CommonFilter
-          filters={HomePageFilters}
-          otherClasses="min-h-[56px] sm:min-w-[170px]"
-          containerClasses="hidden max-md:flex"
-        />
+        {/* Mobile Filter */}
       </section>
+
       <HomeFilter />
 
-      <DataRenderer
-        data={questions}
-        success={success}
-        error={error}
-        empty={EMPTY_QUESTION}
-        render={(questions) => (
+      {/* Suspense boundary with dynamic key to trigger loading on filter change */}
+      <Suspense
+        key={questionsKey}
+        fallback={
           <div className="mt-10 flex w-full flex-col gap-6">
-            {questions.map((question, idx) => (
-              <QuestionCard key={idx} question={question} />
+            {[1, 2, 3, 4, 5].map((i) => (
+              <QuestionCardSkeleton key={i} />
             ))}
           </div>
-        )}
-      />
-
-      <Pagination page={page} isNext={isNext || false} />
+        }
+      >
+        <QuestionsList
+          filter={filter || ""}
+          query={query || ""}
+          page={parsedPage}
+          pageSize={parsedPageSize}
+        />
+      </Suspense>
     </>
   );
 };
