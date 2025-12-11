@@ -12,12 +12,10 @@ const HomeFilter = () => {
   const [active, setActive] = useState<string>(filterParams || "");
 
   const filters = [
-    { name: "React", value: "react" },
-    { name: "Typescript", value: "typescript" },
-    // { name: "Newest", value: "newest" },
-    // { name: "Popular", value: "popular" },
-    // { name: "Unanswered", value: "unanswered" },
-    // { name: "Recommended", value: "recommended" },
+    { name: "Newest", value: "newest" },
+    { name: "Popular", value: "popular" },
+    { name: "Unanswered", value: "unanswered" },
+    { name: "Recommended", value: "recommended" },
   ];
 
   const handleTypeClick = (filter: string) => {
