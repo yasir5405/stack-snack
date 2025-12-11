@@ -238,7 +238,6 @@ export async function getRecommendedQuestions({
   skip,
   limit,
 }: RecommendationParams) {
-  // Get user's recent interactions
   const interactions = await Interaction.find({
     user: new Types.ObjectId(userId),
     actionType: "question",
@@ -250,25 +249,19 @@ export async function getRecommendedQuestions({
 
   const interactedQuestionIds = interactions.map((i) => i.actionId);
 
-  // Get tags from interacted questions
   const interactedQuestions = await Question.find({
     _id: { $in: interactedQuestionIds },
   }).select("tags");
 
-  // Get unique tags
   const allTags = interactedQuestions.flatMap((q) =>
     q.tags.map((tag: Types.ObjectId) => tag.toString())
   );
 
-  // Remove duplicates
   const uniqueTagIds = [...new Set(allTags)];
 
   const recommendedQuery: FilterQuery<typeof Question> = {
-    // exclude interacted questions
     _id: { $nin: interactedQuestionIds },
-    // exclude the user's own questions
     author: { $ne: new Types.ObjectId(userId) },
-    // include questions with any of the unique tags
     tags: { $in: uniqueTagIds.map((id) => new Types.ObjectId(id)) },
   };
 
@@ -284,7 +277,7 @@ export async function getRecommendedQuestions({
   const questions = await Question.find(recommendedQuery)
     .populate("tags", "name")
     .populate("author", "name image")
-    .sort({ upvotes: -1, views: -1 }) // prioritizing engagement
+    .sort({ upvotes: -1, views: -1 })
     .skip(skip)
     .limit(limit)
     .lean();
@@ -319,6 +312,7 @@ export async function getQuestions(params: PaginatedSearchParams): Promise<
   let sortCriteria = {};
 
   try {
+    // Recommendations
     if (filter === "recommended") {
       const session = await getServerSession(authOptions);
       const userId = session?.user.id;
