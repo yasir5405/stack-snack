@@ -8,6 +8,8 @@ import mongoose from "mongoose";
 import { Question } from "@/database";
 import { revalidatePath } from "next/cache";
 import ROUTES from "@/constants/route";
+import { after } from "next/server";
+import { createInteraction } from "./interaction.action";
 
 export const createAnswer = async (
   params: CreateAnswerParams
@@ -49,6 +51,15 @@ export const createAnswer = async (
 
     question.answers += 1;
     await question.save({ session });
+
+    after(async () => {
+      await createInteraction({
+        action: "post",
+        actionId: newAnswer._id.toString(),
+        actionTarget: "answer",
+        authorId: userId as string,
+      });
+    });
 
     await session.commitTransaction();
     committed = true;
