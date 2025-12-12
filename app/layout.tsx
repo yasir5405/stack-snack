@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     siteName: "Stack Snack",
     images: [
       {
-        url: "/images/og-banner.png",
+        url: "/og/home.png",
         width: 1200,
         height: 630,
         alt: "Stack Snack OG Banner",
