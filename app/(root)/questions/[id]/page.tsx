@@ -41,14 +41,14 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: question.title,
       description: question.content.slice(0, 100),
-      images: ["/og/home.png"],
+      images: ["/images/og-banner.png"],
     },
     openGraph: {
       title: question.title,
       description: question.content.slice(0, 100),
       images: [
         {
-          url: "/og/home.png",
+          url: "/images/og-banner.png",
           width: 1200,
           height: 630,
           alt: question.title,

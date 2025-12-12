@@ -2,34 +2,8 @@ import HomeFilter from "@/components/filters/HomeFilter";
 import QuestionsList from "@/components/questions/QuestionsList";
 import LocalSearch from "@/components/search/LocalSearch";
 import QuestionCardSkeleton from "@/components/skeletons/QuestionCardSkeleton";
-import { Metadata } from "next";
 import { Suspense } from "react";
 
-export const metadata: Metadata = {
-  title: "Dev Overflow | Home",
-  description:
-    "Discover different programming questions and answers with recommendations from the community.",
-  twitter: {
-    card: "summary_large_image",
-    title: "Dev Overflow | Home",
-    description:
-      "Discover different programming questions and answers with recommendations from the community.",
-    images: ["/og/home.png"],
-  },
-  openGraph: {
-    title: "Dev Overflow | Home",
-    description:
-      "Discover different programming questions and answers with recommendations from the community.",
-    images: [
-      {
-        url: "/og/home.png",
-        width: 1200,
-        height: 630,
-        alt: "Dev Overflow | Home",
-      },
-    ],
-  },
-};
 
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
