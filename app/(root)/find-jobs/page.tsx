@@ -13,7 +13,10 @@ const Page = async ({ searchParams }: RouteParams) => {
   const userLocation = await fetchLocation();
 
   const jobs = await fetchJobs({
-    query: `${query}, ${location}` || `Software Engineer in ${userLocation}`,
+    query: query?.trim()
+      ? `${query}${location ? `, ${location}` : ""}`
+      : `Software Engineer in ${userLocation ?? "United States"}`,
+
     page: page ?? 1,
   });
 

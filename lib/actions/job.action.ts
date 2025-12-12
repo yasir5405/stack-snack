@@ -3,9 +3,16 @@
 import handleError from "../handlers/error";
 
 export const fetchLocation = async () => {
-  const response = await fetch("https://ip-api.com/json/?fields=country");
-  const location = await response.json();
-  return location.country;
+  try {
+    const response = await fetch("https://ip-api.com/json/?fields=country", {
+      cache: "no-store",
+    });
+    if (!response.ok) throw new Error("Geo lookup failed");
+    const location = await response.json();
+    return location.country ?? "United States";
+  } catch {
+    return "United States";
+  }
 };
 
 export const fetchCountries = async () => {
@@ -23,19 +30,36 @@ export const fetchCountries = async () => {
 export const fetchJobs = async (filters: JobFilterParams) => {
   const { page, query } = filters;
 
-  const headers = {
-    "X-RapidAPI-Key": process.env.NEXT_PUBLIC_RAPID_API_KEY ?? "",
-    "X-RapidAPI-Host": "jsearch.p.rapidapi.com",
-  };
+  try {
+    const headers = {
+      "X-RapidAPI-Key": process.env.NEXT_PUBLIC_RAPID_API_KEY ?? "",
+      "X-RapidAPI-Host": "jsearch.p.rapidapi.com",
+    };
 
-  const response = await fetch(
-    `https://jsearch.p.rapidapi.com/search?query=${query}&page=${page}`,
-    {
-      headers,
+    if (!headers["X-RapidAPI-Key"]) {
+      throw new Error("Missing RAPIDAPI_KEY");
     }
-  );
 
-  const result = await response.json();
+    const response = await fetch(
+      `https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(
+        query
+      )}&page=${page}`,
+      {
+        headers,
+        cache: "no-store",
+      }
+    );
 
-  return result.data;
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(`API error ${response.status}: ${text}`);
+    }
+
+    const result = await response.json();
+
+    return result.data;
+  } catch (error) {
+    console.error("fetchJobs failed:", error);
+    return [];
+  }
 };

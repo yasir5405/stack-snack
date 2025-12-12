@@ -3,6 +3,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { formUrlQuery } from "@/lib/url";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
+import { Spinner } from "./ui/spinner";
 
 interface Props {
   page: number | undefined | string;
@@ -14,7 +16,15 @@ const Pagination = ({ page = 1, isNext, containerClasses = "" }: Props) => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  const [loadingBtn, setLoadingBtn] = useState<"prev" | "next" | null>(null);
+
+  // 🔑 Reset loading when page actually changes
+  useEffect(() => {
+    setLoadingBtn(null);
+  }, [page]);
+
   const handleNavigation = (type: "prev" | "next") => {
+    setLoadingBtn(type);
     const nextPageNumber =
       type === "prev" ? Number(page) - 1 : Number(page) + 1;
 
@@ -24,7 +34,9 @@ const Pagination = ({ page = 1, isNext, containerClasses = "" }: Props) => {
       value: nextPageNumber.toString(),
     });
 
-    router.push(newUrl);
+    // Wrap router.push in startTransition to trigger NextTopLoader
+
+    router.push(newUrl, { scroll: false });
   };
   return (
     <div
@@ -38,8 +50,18 @@ const Pagination = ({ page = 1, isNext, containerClasses = "" }: Props) => {
         <Button
           className="light-border-2 btn flex min-h-[36px] items-center justify-center gap-2 border"
           onClick={() => handleNavigation("prev")}
+          disabled={loadingBtn !== null}
         >
-          <p className="body-medium text-dark200_light800">Prev</p>
+          <span className="body-medium text-dark200_light800">
+            {loadingBtn === "prev" ? (
+              <div className="flex items-center justify-center gap-1">
+                <Spinner />
+                Loading…
+              </div>
+            ) : (
+              "Prev"
+            )}
+          </span>
         </Button>
       )}
 
@@ -52,8 +74,18 @@ const Pagination = ({ page = 1, isNext, containerClasses = "" }: Props) => {
         <Button
           className="light-border-2 btn flex min-h-[36px] items-center justify-center gap-2 border"
           onClick={() => handleNavigation("next")}
+          disabled={loadingBtn !== null}
         >
-          <p className="body-medium text-dark200_light800">Next</p>
+          <span className="body-medium text-dark200_light800">
+            {loadingBtn === "next" ? (
+              <div className="flex items-center justify-center gap-1">
+                <Spinner />
+                Loading…
+              </div>
+            ) : (
+              "Next"
+            )}
+          </span>
         </Button>
       )}
     </div>
